@@ -29,10 +29,16 @@
   height: 64px;
 }
 
+.cell img {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
 .black {
-  background-color: rgb(129, 188, 243);
+  background-color: rgb(107, 177, 243);
 }
 
 .white {
-  background-color: rgb(252, 239, 196);
+  background-color: rgb(233, 216, 159);
 }
