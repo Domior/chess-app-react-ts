@@ -33,6 +33,7 @@
   position: relative;
   width: 48px;
   height: 48px;
+  cursor: pointer;
 }
 
 .black {
@@ -41,4 +42,15 @@
 
 .white {
   background-color: rgb(233, 216, 159);
+}
+
+.selected {
+  background-color: rgb(160, 118, 40);
+}
+
+.available {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background-color: rgb(37, 173, 37);
 }
