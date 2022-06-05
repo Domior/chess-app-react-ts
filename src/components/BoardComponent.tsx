@@ -33,19 +33,19 @@ const BoardComponent: FC<BoardProps> = ({
     }
   }
 
-  function highlightCells() {
-    board.highlightCells(selectedCell);
-    updateBoard();
-  }
-
-  function updateBoard() {
+  const updateBoard = React.useCallback(() => {
     const newBoard = board.getCopyBoard();
     setBoard(newBoard);
-  }
+  }, [board, setBoard]);
+
+  const highlightCells = React.useCallback(() => {
+    board.highlightCells(selectedCell);
+    updateBoard();
+  }, [board, selectedCell, updateBoard]);
 
   React.useEffect(() => {
     highlightCells();
-  }, [selectedCell]);
+  }, [selectedCell, highlightCells]);
 
   return (
     <div>

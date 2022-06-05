@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BoardComponent from './components/BoardComponent';
+import LostFigures from './components/LostFigures';
 
 import { Board } from './models/Board';
 import { Colors } from './models/Colors';
@@ -16,7 +17,7 @@ function App() {
   React.useEffect(() => {
     restart();
     setCurrentPlayer(whitePlayer);
-  }, []);
+  }, [whitePlayer]);
 
   function restart() {
     const newBoard = new Board();
@@ -37,6 +38,10 @@ function App() {
         currentPlayer={currentPlayer}
         swapPlayer={swapPlayer}
       />
+      <div>
+        <LostFigures title="White Figures" figures={board.lostWhiteFigures} />
+        <LostFigures title="Black Figures" figures={board.lostBlackFigures} />
+      </div>
     </div>
   );
 }

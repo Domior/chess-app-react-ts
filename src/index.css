@@ -54,3 +54,10 @@
   border-radius: 50%;
   background-color: rgb(37, 173, 37);
 }
+
+.lost-figures {
+  height: calc(50vh - 100px);
+  padding: 30px;
+  margin-left: 50px;
+  background-color: lightgray;
+}

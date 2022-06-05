@@ -4,13 +4,13 @@ import { Cell } from '../Cell';
 import logo from '../../assets/img/black-bishop.png';
 
 export enum FigureNames {
-  FIGURE = 'Фигура',
-  KING = 'Король',
-  QUEEN = 'Ферзь',
-  ROOK = 'Ладья',
-  BISHOP = 'Слон',
-  KNIGHT = 'Конь',
-  PAWN = 'Пешка',
+  FIGURE = 'Figure',
+  KING = 'King',
+  QUEEN = 'Queen',
+  ROOK = 'Rook',
+  BISHOP = 'Bishop',
+  KNIGHT = 'Knight',
+  PAWN = 'Pawn',
 }
 
 export class Figure {
