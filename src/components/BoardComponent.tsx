@@ -25,7 +25,7 @@ const BoardComponent: FC<BoardProps> = ({
   restart,
 }) => {
   const [selectedCell, setSelectedCell] = React.useState<Cell | null>(null);
-  const [startGame, setStartGame] = React.useState(true);
+  const [startGame, setStartGame] = React.useState(false);
 
   const [blackTime, setBlackTime] = React.useState(initialTime);
   const [whiteTime, setWhiteTime] = React.useState(initialTime);
@@ -52,6 +52,12 @@ const BoardComponent: FC<BoardProps> = ({
     updateBoard();
   }
 
+  function handleRestart() {
+    setBlackTime(initialTime);
+    setWhiteTime(initialTime);
+    restart();
+  }
+
   const timer = React.useRef<null | ReturnType<typeof setInterval>>(null);
 
   function startTimer() {
@@ -59,9 +65,9 @@ const BoardComponent: FC<BoardProps> = ({
       clearInterval(timer.current);
     }
     const cb =
-      currentPlayer?.color === Colors.BLACK ? decrementBlackTimer : decrementWhiteTimer;
+      currentPlayer?.color === Colors.WHITE ? decrementWhiteTimer : decrementBlackTimer;
     timer.current = setInterval(cb, 1000);
-    setStartGame(false);
+    setStartGame(true);
   }
 
   function decrementBlackTimer() {
@@ -72,21 +78,30 @@ const BoardComponent: FC<BoardProps> = ({
     setWhiteTime(prev => prev - 1);
   }
 
-  function handleRestart() {
-    setBlackTime(initialTime);
-    setWhiteTime(initialTime);
-    restart();
-  }
+  React.useEffect(() => {
+    if (blackTime === 0 || whiteTime === 0) {
+      alert(`${currentPlayer?.color} lost`);
+      if (timer.current) {
+        clearInterval(timer.current);
+      }
+      handleRestart();
+      setStartGame(false);
+    }
+  }, [blackTime, whiteTime]);
 
   React.useEffect(() => {
     highlightCells();
   }, [selectedCell]);
 
+  React.useEffect(() => {
+    if (startGame) startTimer();
+  }, [currentPlayer]);
+
   return (
     <>
       <div style={{ marginRight: '20px' }}>
         <div style={{ marginBottom: '20px' }}>
-          <button className="action-btn" onClick={handleRestart} disabled={startGame}>
+          <button className="action-btn" onClick={handleRestart} disabled={!startGame}>
             Restart game
           </button>
         </div>
@@ -94,11 +109,11 @@ const BoardComponent: FC<BoardProps> = ({
         <h2>White - {whiteTime}s</h2>
       </div>
       <div>
-        {!startGame && (
+        {startGame && (
           <h1 style={{ marginBottom: '20px' }}>Turn: {currentPlayer?.color}</h1>
         )}
         <div className="board">
-          {startGame && (
+          {!startGame && (
             <div className="overlay">
               <div>
                 <button className="action-btn" onClick={startTimer}>
