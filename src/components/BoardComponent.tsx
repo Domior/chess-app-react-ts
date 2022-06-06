@@ -5,21 +5,30 @@ import CellComponent from './CellComponent';
 import { Board } from '../models/Board';
 import { Cell } from '../models/Cell';
 import { Player } from '../models/Player';
+import { Colors } from '../models/Colors';
 
 interface BoardProps {
   board: Board;
   setBoard: (board: Board) => void;
   currentPlayer: Player | null;
   swapPlayer: () => void;
+  restart: () => void;
 }
+
+const initialTime: number = 300;
 
 const BoardComponent: FC<BoardProps> = ({
   board,
   setBoard,
   currentPlayer,
   swapPlayer,
+  restart,
 }) => {
   const [selectedCell, setSelectedCell] = React.useState<Cell | null>(null);
+  const [startGame, setStartGame] = React.useState(true);
+
+  const [blackTime, setBlackTime] = React.useState(initialTime);
+  const [whiteTime, setWhiteTime] = React.useState(initialTime);
 
   function clickCell(cell: Cell) {
     if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
@@ -33,38 +42,87 @@ const BoardComponent: FC<BoardProps> = ({
     }
   }
 
-  const updateBoard = React.useCallback(() => {
+  function updateBoard() {
     const newBoard = board.getCopyBoard();
     setBoard(newBoard);
-  }, [board, setBoard]);
+  }
 
-  const highlightCells = React.useCallback(() => {
+  function highlightCells() {
     board.highlightCells(selectedCell);
     updateBoard();
-  }, [board, selectedCell, updateBoard]);
+  }
+
+  const timer = React.useRef<null | ReturnType<typeof setInterval>>(null);
+
+  function startTimer() {
+    if (timer.current) {
+      clearInterval(timer.current);
+    }
+    const cb =
+      currentPlayer?.color === Colors.BLACK ? decrementBlackTimer : decrementWhiteTimer;
+    timer.current = setInterval(cb, 1000);
+    setStartGame(false);
+  }
+
+  function decrementBlackTimer() {
+    setBlackTime(prev => prev - 1);
+  }
+
+  function decrementWhiteTimer() {
+    setWhiteTime(prev => prev - 1);
+  }
+
+  function handleRestart() {
+    setBlackTime(initialTime);
+    setWhiteTime(initialTime);
+    restart();
+  }
 
   React.useEffect(() => {
     highlightCells();
-  }, [selectedCell, highlightCells]);
+  }, [selectedCell]);
 
   return (
-    <div>
-      <h3 style={{ marginBottom: '20px' }}>Turn: {currentPlayer?.color}</h3>
-      <div className="board">
-        {board.cells.map((row, i) => (
-          <React.Fragment key={i}>
-            {row.map(cell => (
-              <CellComponent
-                key={cell.id}
-                cell={cell}
-                selected={cell.x === selectedCell?.x && cell.y === selectedCell?.y}
-                onClick={clickCell}
-              />
-            ))}
-          </React.Fragment>
-        ))}
+    <>
+      <div style={{ marginRight: '20px' }}>
+        <div style={{ marginBottom: '20px' }}>
+          <button className="action-btn" onClick={handleRestart} disabled={startGame}>
+            Restart game
+          </button>
+        </div>
+        <h2>Black - {blackTime}s</h2>
+        <h2>White - {whiteTime}s</h2>
       </div>
-    </div>
+      <div>
+        {!startGame && (
+          <h1 style={{ marginBottom: '20px' }}>Turn: {currentPlayer?.color}</h1>
+        )}
+        <div className="board">
+          {startGame && (
+            <div className="overlay">
+              <div>
+                <button className="action-btn" onClick={startTimer}>
+                  Start game
+                </button>
+              </div>
+            </div>
+          )}
+
+          {board.cells.map((row, i) => (
+            <React.Fragment key={i}>
+              {row.map(cell => (
+                <CellComponent
+                  key={cell.id}
+                  cell={cell}
+                  selected={cell.x === selectedCell?.x && cell.y === selectedCell?.y}
+                  onClick={clickCell}
+                />
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -9,7 +9,6 @@ import { Player } from './models/Player';
 
 function App() {
   const [board, setBoard] = React.useState(new Board());
-
   const [whitePlayer, setWhitePlayer] = React.useState(new Player(Colors.WHITE));
   const [blackPlayer, setBlackPlayer] = React.useState(new Player(Colors.BLACK));
   const [currentPlayer, setCurrentPlayer] = React.useState<Player | null>(null);
@@ -24,6 +23,7 @@ function App() {
     newBoard.initCells();
     newBoard.addFigures();
     setBoard(newBoard);
+    setCurrentPlayer(whitePlayer);
   }
 
   function swapPlayer() {
@@ -37,6 +37,7 @@ function App() {
         setBoard={setBoard}
         currentPlayer={currentPlayer}
         swapPlayer={swapPlayer}
+        restart={restart}
       />
       <div>
         <LostFigures title="White Figures" figures={board.lostWhiteFigures} />
